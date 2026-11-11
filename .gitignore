@@ -1,0 +1,24 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Node / frontend build output
+node_modules/
+frontend/dist/
+
+# Local editor and assistant settings
+.claude/settings.local.json
+.mcp.json
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db

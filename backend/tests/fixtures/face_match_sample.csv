@@ -1,0 +1,10 @@
+# SYNTHETIC DEMO ONLY — not measured model output; replace with cosine scores from consented face images.
+label,similarity
+match,0.82
+match,0.76
+match,0.68
+match,0.57
+nonmatch,0.43
+nonmatch,0.36
+nonmatch,0.22
+nonmatch,0.08

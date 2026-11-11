@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --navy: #102139;
+    --navy-deep: #091626;
+    --cream: #fffaf0;
+    --coral: #f17868;
+    --page-bg: #102139;
+  }
+
+  * { @apply border-border; }
+
+  html { min-width: 320px; min-height: 100%; background: var(--page-bg); }
+
+  body {
+    @apply relative min-h-screen overflow-x-hidden bg-transparent font-sans text-foreground antialiased;
+    background: transparent;
+  }
+
+  #root { position: relative; z-index: 1; min-height: 100vh; }
+  button, a, input { -webkit-tap-highlight-color: transparent; }
+  ::selection { background: rgba(241, 120, 104, .38); color: #fffaf0; }
+}
+
+@layer components {
+  .glass-panel {
+    @apply border border-[#fffaf0]/20 bg-[#fffaf0]/[.12] shadow-xl shadow-black/20 backdrop-blur-2xl;
+    transition: background-color 220ms ease, border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+  }
+
+  .glass-panel:hover {
+    @apply border-[#fffaf0]/30 bg-[#fffaf0]/[.16] shadow-2xl shadow-black/25;
+  }
+
+  .auth-shell { position: relative; z-index: 0; isolation: isolate; overflow: hidden; background: transparent; }
+  .auth-shell { overflow: hidden; }
+  .auth-shell::before, .auth-shell::after {
+    position: fixed;
+    z-index: -1;
+    pointer-events: none;
+    content: "";
+  }
+  .auth-shell::before {
+    inset: -12%;
+    border-radius: 9999px;
+    background: radial-gradient(ellipse at 25% 30%, rgba(241,120,104,.25), transparent 26%), radial-gradient(ellipse at 74% 42%, rgba(255,250,240,.28), transparent 30%), radial-gradient(ellipse at 58% 78%, rgba(70,112,155,.42), transparent 32%);
+    filter: blur(32px);
+    animation: background-drift 26s ease-in-out infinite alternate;
+  }
+  .auth-shell::after { content: none; }
+  .auth-orbs { position: fixed; z-index: -1; inset: 0; overflow: hidden; pointer-events: none; }
+  .auth-orbs i { position: absolute; left: var(--circle-x, 50%); top: var(--circle-y, 50%); width: clamp(150px, 24vw, 330px); aspect-ratio: 1; border: 1px solid rgba(255,250,240,.5); border-radius: 50%; background: radial-gradient(circle at 32% 28%, rgba(255,250,240,.48), rgba(255,250,240,.16) 42%, rgba(16,33,57,.04) 72%); box-shadow: inset 0 0 48px rgba(255,250,240,.22), 0 0 30px rgba(255,250,240,.26), 0 0 70px rgba(241,120,104,.26); backdrop-filter: blur(5px); transform: translate(-50%,-50%) translate(var(--orb-x),var(--orb-y)) scale(.7); opacity: .36; transition: left 7s cubic-bezier(.45,0,.55,1), top 7s cubic-bezier(.45,0,.55,1), transform 1.2s ease, opacity 1.2s ease; }
+  .auth-orbs i:nth-child(1) { --orb-x: -90px; --orb-y: -48px; }
+  .auth-orbs i:nth-child(2) { --orb-x: 72px; --orb-y: -66px; width: clamp(120px, 19vw, 250px); }
+  .auth-orbs i:nth-child(3) { --orb-x: -30px; --orb-y: 82px; width: clamp(130px, 20vw, 270px); }
+  .auth-orbs i:nth-child(4) { --orb-x: 105px; --orb-y: 70px; width: clamp(100px, 16vw, 220px); }
+  .auth-orbs i:nth-child(5) { --orb-x: -130px; --orb-y: 20px; width: clamp(90px, 14vw, 190px); }
+  .auth-orbs i:nth-child(6) { --orb-x: 145px; --orb-y: -8px; width: clamp(80px, 12vw, 170px); }
+  .auth-shell:not(.dashboard-shell) .auth-orbs i { width: min(46vw, 580px); min-width: 280px; left: var(--circle-x, 50%); top: var(--circle-y, 50%); transform: translate(-50%,-50%); opacity: .7; box-shadow: inset 0 0 70px rgba(255,250,240,.34), 0 0 34px rgba(255,250,240,.42), 0 0 88px rgba(241,120,104,.45), 0 0 150px rgba(241,120,104,.24); transition: left 6s cubic-bezier(.45,0,.55,1), top 6s cubic-bezier(.45,0,.55,1), box-shadow 700ms ease; }
+  .auth-shell:has(.login-card:hover, .login-card:focus-within) .auth-orbs i { left: 50%; top: 50%; transform: translate(-50%,-50%); opacity: .9; box-shadow: inset 0 0 82px rgba(255,250,240,.44), 0 0 48px rgba(255,250,240,.58), 0 0 120px rgba(241,120,104,.58), 0 0 190px rgba(241,120,104,.3); transition-duration: 450ms, 450ms, 300ms; }
+  .dashboard-shell .auth-orbs { position: fixed; }
+  .dashboard-shell .auth-orbs i { left: var(--circle-x, 50%); top: var(--circle-y, 50%); transform: translate(-50%,-50%) scale(.7); }
+  .dashboard-shell .auth-orbs i.is-nearest { left: var(--active-x, 50%); top: var(--active-y, 50%); transform: translate(-50%,-50%) scale(1); opacity: .8; box-shadow: inset 0 0 56px rgba(255,250,240,.3), 0 0 38px rgba(255,250,240,.42), 0 0 90px rgba(241,120,104,.42); transition-duration: 500ms; }
+  .auth-shell .login-card.is-signing-in {
+    animation: login-glow 1.2s ease-in-out infinite alternate;
+  }
+  .auth-shell > .glass-panel { animation: rise-in 650ms cubic-bezier(.2,.75,.25,1) both; }
+  .auth-shell > .glass-panel > * { animation: fade-in 500ms ease both; }
+  .auth-shell > .glass-panel > *:nth-child(2) { animation-delay: 100ms; }
+  .auth-shell > .glass-panel > *:nth-child(3) { animation-delay: 180ms; }
+
+  .landing-shell { position: relative; isolation: isolate; color: var(--cream); }
+  .landing-shell::before { position: fixed; z-index: -1; inset: 0; pointer-events: none; content: ""; background: radial-gradient(ellipse at 78% 38%, rgba(255,250,240,.12), transparent 32%), radial-gradient(ellipse at 12% 88%, rgba(241,120,104,.15), transparent 30%); }
+  .landing-nav, .landing-glass, .landing-step, .landing-float-chip { box-shadow: inset 0 1px 0 rgba(255,250,240,.08), 0 18px 55px rgba(0,0,0,.18); }
+  .landing-copy { animation: rise-in 650ms cubic-bezier(.2,.75,.25,1) both; }
+  .landing-visual { animation: fade-in 900ms ease both; }
+  .landing-step { transition: transform 220ms ease, border-color 220ms ease, background-color 220ms ease, box-shadow 220ms ease; }
+  .landing-step:hover { transform: translateY(-5px); border-color: rgba(255,250,240,.3); background-color: rgba(255,250,240,.11); box-shadow: 0 24px 70px rgba(0,0,0,.24); }
+  .landing-orbit { position: absolute; width: 82%; aspect-ratio: 1; border: 1px solid rgba(255,250,240,.12); border-radius: 50%; }
+  .landing-orbit-one { animation: orbit-spin 38s linear infinite; }
+  .landing-orbit-two { width: 68%; border-color: rgba(241,120,104,.24); transform: rotateX(64deg) rotate(-22deg); animation: orbit-spin 30s linear infinite reverse; }
+  .landing-orb { position: absolute; border-radius: 50%; pointer-events: none; }
+  .landing-orb-one { width: 260px; height: 260px; right: 4%; top: 7%; background: rgba(255,250,240,.18); filter: blur(45px); animation: background-drift 15s ease-in-out infinite alternate; }
+  .landing-orb-two { width: 200px; height: 200px; bottom: 3%; left: 0; background: rgba(241,120,104,.23); filter: blur(48px); animation: glass-float 13s ease-in-out infinite alternate; }
+  .landing-glass { animation: rise-in 750ms .12s cubic-bezier(.2,.75,.25,1) both; }
+  .landing-float-chip { position: absolute; z-index: 20; display: flex; align-items: center; gap: 9px; border: 1px solid rgba(255,250,240,.2); border-radius: 14px; background: rgba(255,250,240,.12); padding: 11px 14px; color: rgba(255,250,240,.88); font-size: 12px; backdrop-filter: blur(18px); animation: chip-float 6s ease-in-out infinite alternate; }
+  .landing-float-chip-a { left: -2%; top: 20%; }
+  .landing-float-chip-b { right: -1%; bottom: 16%; animation-delay: -3s; }
+  .landing-cta { transition: transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease; }
+  .landing-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(241,120,104,.3); }
+  @keyframes orbit-spin { to { rotate: 1turn; } }
+  @keyframes chip-float { from { transform: translateY(7px); } to { transform: translateY(-9px); } }
+
+  .dashboard-shell > * { animation: rise-in 550ms cubic-bezier(.2,.75,.25,1) both; }
+  .dashboard-shell > *:nth-child(2) { animation-delay: 70ms; }
+  .dashboard-shell > *:nth-child(3) { animation-delay: 140ms; }
+  .dashboard-shell > *:nth-child(4) { animation-delay: 210ms; }
+  .dashboard-shell > *:nth-child(5) { animation-delay: 280ms; }
+  .dashboard-welcome { box-shadow: inset 0 1px 0 rgba(255,250,240,.1), 0 20px 55px rgba(0,0,0,.18); }
+  .dashboard-panel { background: linear-gradient(145deg, rgba(255,250,240,.15), rgba(255,250,240,.08)); }
+  .dashboard-metric { background: linear-gradient(145deg, rgba(255,250,240,.17), rgba(255,250,240,.08)); }
+  .dashboard-metric .text-muted-foreground { color: rgba(255,250,240,.58); }
+  .dashboard-shell .glass-panel:hover { transform: translateY(-3px); }
+  .dashboard-shell tr { transition: background-color 180ms ease; }
+  .dashboard-shell tbody tr:hover { background-color: rgba(255,250,240,.055); }
+  .dashboard-shell details > summary:hover { color: var(--cream); }
+  button, a, input, summary { transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease; }
+  button:hover:not(:disabled) { transform: translateY(-1px); }
+  .auth-shell input:focus-visible { box-shadow: 0 0 0 3px rgba(241,120,104,.2); }
+
+  @keyframes rise-in {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes background-drift {
+    0% { transform: translate3d(-3%, -2%, 0) rotate(-4deg) scale(.96); }
+    50% { transform: translate3d(2%, 3%, 0) rotate(3deg) scale(1.04); }
+    100% { transform: translate3d(4%, -1%, 0) rotate(-2deg) scale(1); }
+  }
+  @keyframes glass-float {
+    0% { transform: translate3d(-12px, -18px, 0) rotate(-8deg); }
+    100% { transform: translate3d(20px, 24px, 0) rotate(9deg); }
+  }
+  @keyframes glass-orbit {
+    0% { transform: translate3d(-34vw, 34vh, 0) rotate(-12deg); }
+    25% { transform: translate3d(30vw, -30vh, 0) rotate(6deg); }
+    50% { transform: translate3d(34vw, 32vh, 0) rotate(14deg); }
+    75% { transform: translate3d(-32vw, -32vh, 0) rotate(-5deg); }
+    100% { transform: translate3d(-34vw, 34vh, 0) rotate(10deg); }
+  }
+  @keyframes login-glow {
+    from { box-shadow: 0 0 24px rgba(255,250,240,.24), 0 0 44px rgba(241,120,104,.16), 0 25px 70px rgba(0,0,0,.28); }
+    to { box-shadow: 0 0 42px rgba(255,250,240,.46), 0 0 85px rgba(241,120,104,.34), 0 25px 70px rgba(0,0,0,.28); }
+  }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 650ms; }
+  ::view-transition-old(root) { animation-name: page-out; }
+  ::view-transition-new(root) { animation-name: page-in; }
+  @keyframes page-out { to { opacity: 0; transform: scale(.985); filter: blur(5px); } }
+  @keyframes page-in { from { opacity: 0; transform: translateY(12px) scale(1.01); filter: blur(5px); } }
+}
+
+@layer utilities {
+  .focus-ring { @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background; }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-panel { background-color: rgba(16, 33, 57, .97); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-shell::before, .auth-shell::after, .auth-shell > .glass-panel, .auth-shell > .glass-panel > *, .dashboard-shell > *, .landing-copy, .landing-visual, .landing-glass, .landing-orbit, .landing-orb, .landing-float-chip, ::view-transition-old(root), ::view-transition-new(root) {
+    animation: none !important;
+  }
+  .dashboard-shell .glass-panel:hover, button:hover:not(:disabled) { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
