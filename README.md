@@ -2,7 +2,7 @@
 
 An AI-assisted classroom attendance web app. Teachers create classes, enroll students, start an attendance session, and use a live camera kiosk to recognize enrolled students. Students can register with a face image, sign in, and view their attendance history. The app includes teacher and student dashboards backed by a FastAPI API and Supabase database.
 
-> **Project status:** This repository does not include the initial SQL that creates all core Supabase tables or their RLS policies. An existing Supabase project with the expected schema is required; the included migrations alone do not initialize a fresh database. Review the limitations and security notes below before using this with real student data.
+> **Database setup:** A fresh Supabase project can be initialized with `backend/migrations/20261111_initial_schema.sql`. It creates the core attendance tables and enables RLS without adding browser-facing policies; the backend uses its server-side service-role key. Review the security and migration notes below before using this with real student data.
 
 ## Contents
 
@@ -197,7 +197,7 @@ The example file sets the local HTTP API and WebSocket base URLs. The current fr
 
 ### 4. Supabase database
 
-Set up the core tables and required policies in Supabase before using the app. This repository does not provide a complete clean-install schema or policy set, so do not assume a blank Supabase project is ready after applying the included migrations. Inspect the migration SQL and confirm it matches your database before applying it.
+For a fresh Supabase project, open the SQL Editor and run `backend/migrations/20261111_initial_schema.sql`. It creates the six tables used by the API, their foreign keys, uniqueness/check constraints, indexes, and enables RLS. There are no client-facing RLS policies in this migration: browser requests must go through the backend, which uses the service-role key. Do not give the service-role key to the frontend. If the tables already exist, do not run this initial migration again; compare the SQL with your existing schema first.
 
 ## Configuration
 
@@ -279,7 +279,7 @@ There is no frontend test script currently. The included face-match sample test 
 
 ## Database migrations
 
-SQL files are in `backend/migrations/`. They concern organization-tenancy changes, including adding and later removing organization-related structures; they do not create all six core attendance tables. They are not a substitute for a fresh-install schema. Read each migration and verify its assumptions against a backup or a disposable database before applying it to any database with data. In particular, do not blindly run a migration on production.
+The migration in `backend/migrations/20261111_initial_schema.sql` creates the core six-table schema for a fresh project and enables RLS. It is not idempotent; run it once, only when those tables do not already exist. Before applying it to a database with data, inspect the SQL, verify its assumptions against the live schema, and take a backup. Do not blindly run it on production.
 
 ## Security, privacy, and limitations
 
